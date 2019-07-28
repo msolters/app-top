@@ -79,7 +79,21 @@ This project uses Skaffold and Google Cloud Build to CD to k8s, but can also be 
 ## Using Skaffold
 ### Prerequisites
 *  You will need `kubectl` installed, and have a `current-context` selected that you can push to.
+*  You will need `kustomize` binary installed
 *  You will need the `skaffold` binary installed ([see here](https://skaffold.dev/docs/getting-started/))
+
+Installing `kustomize` from binaries:
+```bash
+# Installing kustomize
+wget https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+chmod +x kustomize_3.1.0_linux_amd64
+sudo mv kustomize_3.1.0_linux_amd64 /usr/local/bin/kustomize
+
+# Installing skaffold
+curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
+chmod +x skaffold
+sudo mv skaffold /usr/local/bin
+```
 
 ### Configuring
 We need to tell Skaffold what Google Cloud Project we want to use Cloud Build in, so update `skaffold.yaml` to use your project ID:
