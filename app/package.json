@@ -21,7 +21,7 @@
   "scripts": {
     "start": "node src/templateDocs.js && react-scripts start",
     "template": "node src/templateDocs.js",
-    "watch": "watch 'npm run template' $DOCS_DIR/src -d",
+    "watch": "watch 'npm run template' docs/ -d",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
