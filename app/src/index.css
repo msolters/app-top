@@ -1,0 +1,284 @@
+@import url(https://cdn.jsdelivr.net/gh/tonsky/FiraCode@1.206/distr/fira_code.css);
+html {
+  overflow: hidden;
+  zoom: 80%;
+}
+html, body, #root {
+  font-family: 'Fira Code', monospace;
+  height: 100%;
+  margin: 0;
+  background: #333333;
+  color: #fff;
+}
+#root {
+  position: relative;
+  overflow: auto;
+  background-size: 40px 40px;
+  background-image: radial-gradient(circle, #555555 1px, rgba(0, 0, 0, 0) 1px);
+  background-attachment: local;
+}
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+a {
+  color: yellow;
+}
+.app {
+}
+.app, .dataLayer {
+  min-width: 100%;
+  height: 100%;
+}
+.curveLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.dataLayer {
+  position: relative;
+  padding-top: 3em;
+  padding-left: 0.4em;
+  display: inline-flex;
+  flex-direction: row;
+  width: auto;
+  min-width: 100%;
+  min-height: 100%;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+.canvas-controls {
+  position: fixed;
+  top: 1%;
+  right: 1%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.app-top-title {
+  margin-right: 1em;
+  opacity: 0.5;
+  border-left: 1px solid #ffffff;
+  padding-left: 1em;
+  cursor: pointer;
+  transition: opacity 0.2s linear;
+}
+.app-top-title:hover {
+  opacity: 1;
+}
+.graph-radius {
+  font-weight: lighter;
+  font-size: 1em;
+  color: #ffffff;
+  padding: 0 0.5em;
+}
+.canvas-control-button {
+  background: #555555;
+  border: 1px solid #555555;
+  border-radius: 15px;
+  padding: 10px;
+  cursor: pointer;
+  margin-right: 10px;
+  opacity: 0.5;
+  transition: opacity 0.2s linear;
+}
+.canvas-control-button:hover {
+  background: #777777;
+  opacity: 1;
+}
+.canvas-control-button.selected {
+  background: #777777;
+  border: 1px solid #ffffff;
+  opacity: 1;
+}
+.leftAlign {
+  text-align: left;
+}
+.centerAlign {
+  text-align: center;
+}
+.rightAlign {
+  text-align: right;
+}
+.verticalGutter {
+  pointer-events: none;
+  min-width: 20em;
+  height: auto;
+  margin: 0em 1em;
+  max-height: calc(100% - 2em);
+  transition: opacity 0.05s linear;
+  padding: 1em;
+}
+.verticalGutter.react-draggable-dragging {
+  background: #222222;
+  border-radius: 15px;
+  opacity: 0.4;
+}
+.pill {
+  pointer-events: auto;
+  border-radius: 15px;
+  font-size: 1em;
+  margin: 15px;
+  color: #aaaaaa;
+  opacity: 0.8;
+  font-style: italic;
+  font-weight: 100;
+  cursor: pointer;
+  padding: 0.5em;
+  background: #555555;
+  border: solid #555555 3px;
+  word-break: break-all;
+  transition: color 0.3s linear, border-color 0.3s linear, transform 0.3s linear;
+}
+@keyframes shake {
+  10%, 90% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  20%, 80% {
+    transform: translate3d(4px, 0, 0);
+  }
+
+  30%, 50%, 70% {
+    transform: translate3d(-8px, 0, 0);
+  }
+
+  40%, 60% {
+    transform: translate3d(8px, 0, 0);
+  }
+}
+.verticalGutter.react-draggable-dragging .pill {
+  animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
+}
+.pill.title {
+  color: #ffffff;
+  font-style: normal;
+  cursor: grab;
+  background: #555555;
+}
+.pill.title:hover {
+  background: #777777 !important;
+}
+.pill.active {
+  background-color: #222222;
+  font-weight: bold;
+  font-style: normal;
+  color: #ffffff;
+  border: solid 3px;
+  background: linear-gradient(231deg, #555555, #222222);
+  background-size: 400% 400%;
+  -webkit-animation: AnimationName 10s ease infinite;
+  -moz-animation: AnimationName 10s ease infinite;
+  animation: AnimationName 10s ease infinite;
+}
+.pill.related {
+  font-weight: bold;
+  font-style: normal;
+  color: #ffffff;
+}
+.pill:not(.title):hover {
+  background-color: #777777 !important;
+}
+.detailView {
+  margin: 15px;
+  margin-bottom: 50em;
+  width: 43em;
+  padding: 2em;
+  border-radius: 15px;
+  max-height: calc(100% - 9em);
+  background-color: #555555;
+  overflow: auto;
+  border: 2px solid #ffffff;
+  position: absolute;
+  z-index: 10;
+  cursor: grab;
+  transition: opacity 0.05s linear, box-shadow 0.2s linear, height 0.2s linear;
+  opacity: 1;
+}
+.detailView:hover{
+  box-shadow: #222222 5px 10px 10px;
+}
+.detailView.react-draggable-dragging {
+  opacity: 0.4;
+}
+.detailView .windowControls {
+  display: inline-flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+}
+.toggleBtn, .closeBtn {
+  cursor: pointer;
+  padding: 0.25em;
+  border-radius: 0.5em;
+  height: 0.5em;
+  width: 0.5em;
+  margin-left: 0.5em;
+}
+.closeBtn {
+  background-color: red;
+}
+.detailView .toggleBtn:hover {
+  color: yellow;
+  box-shadow: #222222 0.1em 0.1em 0.1em  0;
+}
+.detailView table {
+  width: 100%;
+  margin-top: 1em;
+  border-collapse: collapse;
+}
+.detailView table td {
+  padding: 0.5em;
+}
+.detailView table thead th {
+  padding-left: 0.5em;
+}
+.detailView table tbody tr:nth-child(even) {
+  background: #444444;
+}
+.detailView table tbody tr:nth-child(odd) {
+  background: #333333;
+}
+.detailView blockquote {
+  background-color: #222222;
+  padding: 0.25em 1em;
+  border-radius: 10px;
+}
+.detailView img {
+  max-width: 100%;
+}
+.detailTitle {
+  font-size: 2em;
+  word-break: break-all;
+  padding-bottom: 0.2em;
+}
+.detailBody {
+  font-size: 0.8em;
+}
+.detailDepTitle {
+  font-style: underline;
+}
+.depLink {
+  cursor: pointer;
+  font-style: underline;
+  background-color: #222222;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.depLink:hover {
+  background-color: #444444;
+}

@@ -1,0 +1,38 @@
+{
+  "name": "app-top",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "color-interpolate": "^1.0.4",
+    "color-scheme": "^1.0.1",
+    "hex-to-rgba": "^2.0.0",
+    "immutability-helper": "^3.0.1",
+    "md5": "^2.2.1",
+    "react": "^16.8.2",
+    "react-dom": "^16.8.2",
+    "react-draggable": "^3.3.0",
+    "react-markdown": "^4.1.0",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.1",
+    "react-syntax-highlighter": "^11.0.1",
+    "watch": "^1.0.2",
+    "yaml": "^1.6.0"
+  },
+  "scripts": {
+    "start": "node src/templateDocs.js && react-scripts start",
+    "template": "node src/templateDocs.js",
+    "watch": "watch 'npm run template' $DOCS_DIR/src -d",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

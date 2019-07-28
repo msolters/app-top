@@ -1,0 +1,13 @@
+apiVersion: skaffold/v1beta13
+kind: Config
+build:
+  googleCloudBuild:
+    projectId: <YOUR PROJECT ID HERE>
+  artifacts:
+  - image: app-top
+  tagPolicy:
+    envTemplate:
+      template: "{{.DOCKER_REPO}}/{{.IMAGE_NAME}}:{{.GIT_HASH}}"
+deploy:
+  kustomize:
+    path: .

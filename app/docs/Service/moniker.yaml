@@ -1,0 +1,7 @@
+---
+name: Moniker
+doc: |-
+  # About
+  Moniker is a DNS and hostname service provider.
+
+depends: {}

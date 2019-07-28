@@ -1,0 +1,9 @@
+---
+name: GKE
+doc: |-
+  # About
+  Google Kubernetes Engine is a Google Cloud Platform product that provides Kubernetes control planes as a service.
+
+depends:
+  Service:
+    Google Cloud Platform: GKE is a Google Cloud managed product

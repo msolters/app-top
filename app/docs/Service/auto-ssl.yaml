@@ -1,0 +1,10 @@
+---
+name: auto-ssl
+doc: |-
+  # About
+  `auto-ssl` is an OpenResty container with a LUA plugin called `autossl` added.  It can automatically get TLS certs from Let's Encrypt if there aren't any to satisfy HTTPS requests.  It caches its certs in a `redis` instance.
+
+depends:
+  Service:
+    redis-autossl: |-
+      `auto-ssl` will write its TLS certs to this `redis` instance.  HTTPS won't work if this isn't reachable and healthy.

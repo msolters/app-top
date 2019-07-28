@@ -1,0 +1,7 @@
+---
+name: redis-autossl
+doc: |-
+  # About
+  This is a simple `redis` instance running with a 2Gb standard disk.  It is used to cache TLS certs for services using the `auto-ssl` reverse-proxy container.
+
+depends: {}

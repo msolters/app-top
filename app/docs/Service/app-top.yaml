@@ -1,0 +1,17 @@
+---
+name: app-top
+doc: |-
+  # About
+  `app-top` is a deployment comprising a yarn web server and an nginx reverse-proxy to provide TLS termination.
+
+  ## Kubernetes Location
+  namespace | kind | name
+  --- | --- | ---
+  default | deployment | app-top
+
+depends:
+  Service:
+    auto-ssl: |-
+      This `deployment` depends on `auto-ssl` to acquire and render its TLS certs.
+    GKE: |-
+      This `deployment` is hosted on a GKE managed cluster.

@@ -1,0 +1,9 @@
+---
+name: app-top.marksolters.com
+doc: |-
+  # About
+  This is an A record that points to the external load balancer for the `app-top` service.
+
+depends:
+  Service:
+    Moniker: Moniker is a DNS and hostname service provider.
