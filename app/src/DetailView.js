@@ -71,7 +71,7 @@ export class DetailView extends Component {
       editLink = '';
     } else {
       doc = this.props.doc.docs[activeKey];
-      editLink = <a href={`https://github.com/${this.props.doc.config.githubOrgName}/app-top/edit/master/app/src/docs/src/${doc.type}/${doc.fileName}`}>Contribute to this document ✏</a>;
+      editLink = <a href={`https://github.com/${this.props.doc.config.githubOrgName}/app-top/edit/master/app/docs/${doc.type}/${doc.fileName}`}>Contribute to this document ✏</a>;
     }
     const docBody = doc.doc;
 
