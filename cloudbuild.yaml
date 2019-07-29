@@ -3,5 +3,6 @@ steps:
     args: ['skaffold-run']
     env:
       - 'PROJECT_ID=$PROJECT_ID'
+      - 'SHORT_SHA=$SHORT_SHA'
       - 'CLOUDSDK_COMPUTE_ZONE=${_COMPUTE_ZONE}'
       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CONTAINER_CLUSTER}'
