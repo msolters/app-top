@@ -1,8 +1,8 @@
 .PHONY: all build release
 
 repo=app-top
-shorthash=`git rev-parse --short HEAD`
-registry=<YOUR REPO GOES HERE>
+shorthash=$(SHORT_SHA)
+registry=gcr.io/$(PROJECT_ID)
 base=$(registry)/$(repo)
 branch=$${BRANCH_NAME:-`git rev-parse --abbrev-ref HEAD`}
 image=$(base):$(shorthash)
@@ -10,6 +10,7 @@ image=$(base):$(shorthash)
 all: build release
 
 skaffold-run:
+	./skaffold.sh
 	DOCKER_REPO=$(registry) GIT_HASH=$(shorthash) bash kustomize.sh
 	DOCKER_REPO=$(registry) GIT_HASH=$(shorthash) skaffold run
 

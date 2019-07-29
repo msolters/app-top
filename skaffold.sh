@@ -1,8 +1,11 @@
+#!/usr/bin/env bash
+
+cat <<EOF >skaffold.yaml
 apiVersion: skaffold/v1beta13
 kind: Config
 build:
   googleCloudBuild:
-    projectId: <YOUR PROJECT ID HERE>
+    projectId: ${PROJECT_ID}
   artifacts:
   - image: app-top
   tagPolicy:
@@ -11,3 +14,4 @@ build:
 deploy:
   kustomize:
     path: .
+EOF

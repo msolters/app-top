@@ -1,0 +1,7 @@
+steps:
+  - name: 'gcr.io/$PROJECT_ID/skaffold:alpha'
+    args: ['skaffold-run']
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'CLOUDSDK_COMPUTE_ZONE=${_COMPUTE_ZONE}'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=${_CONTAINER_CLUSTER}'
