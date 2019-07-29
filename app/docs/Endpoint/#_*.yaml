@@ -1,0 +1,17 @@
+---
+name: /#/*
+doc: |-
+  # About
+  `app-top` has a single endpoint family, which is used to specify the document ID of the selected document.
+
+  host | endpoint | destination
+  --- | --- | ---
+  app-top.marksolters.com | /#/<docKey> | app-top
+
+depends:
+  DNS Record:
+    app-top.marksolters.com: |-
+      This hostname must be resolvable for the app to be reachable.
+  Service:
+    app-top: |-
+      The `app-top` web app is served by the `app-top` `deployment`

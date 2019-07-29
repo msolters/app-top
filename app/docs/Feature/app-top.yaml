@@ -7,10 +7,7 @@ doc: |-
   These relationships are then browsable graphically.  This can be used for illustrating cloud computing topologies and systems at an architectural yet easily accessible level.
 
 depends:
-  DNS Record:
-    app-top.marksolters.com: |-
-      This hostname must be resolve for the app to be reachable.
-  Service:
-    app-top: |-
-      The `app-top` web app is served by the `app-top` `deployment`
+  Endpoint:
+    /#/*: |-
+      `app-top` is served on endpoints structured to accept a document key which becomes the selected document.
 

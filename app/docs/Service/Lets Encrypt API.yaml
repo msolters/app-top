@@ -1,0 +1,7 @@
+---
+name: Let's Encrypt API
+doc: |-
+  # About
+  Let's Encrypt is a third party service providing certificate signing services.  They provide a free that we leverage to acquire certs signed for network requests received on the `auto-ssl` reverse proxies.
+
+depends: {}

@@ -76,8 +76,14 @@ Recomended relationships are systems with a hard dependencies, such as Google Bu
 # Developing
 This project uses Skaffold and Google Cloud Build to CD to k8s, but can also be run locally without any of that stuff.
 
-## Using Skaffold
+## Local Dev
+Start a local web server with `make run`.
+
+Once you start modifying `app/docs` files, keep your changes in sync by running `make template` in the background.
+
+## Skaffold Dev
 ### Prerequisites
+*  You will need `gcloud` authed on your host, and able to write to your private Docker registry.
 *  You will need `kubectl` installed, and have a `current-context` selected that you can push to.
 *  You will need `kustomize` binary installed ([kustomize docs](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/INSTALL.md))
 *  You will need the `skaffold` binary installed ([skaffold docs](https://skaffold.dev/docs/getting-started/))
@@ -115,7 +121,7 @@ Example:
 registry=gcr.io/my-project-492014
 ```
 
-That's all we need!
+That's all we need to perform a cloud build.
 
 ### Running
 To build everything and push it to your k8s cluster, run:
@@ -126,8 +132,10 @@ make skaffold-run
 
 This will cause the Dockerfile to be built in Google Cloud Build.  When it is done, the `k8s/*.yaml` files will be templated and deployed to the `current-context` of your `kubectl` env.
 
-## Customizing
+# Customizing
 ### Your Own Documentation
+All documentation is stored in `app/docs`.  The documentation provided here is meant only as an example.
+
 Simply overwrite the contents of `app/docs` with whatever you want!
 
 ### Changing Hostname
@@ -142,8 +150,38 @@ end)
 
 When you deploy to k8s, you will create a `LoadBalancer` type `service` named `app-top`.  Make sure `hostname.resolving.toyourservice` has an A record pointing to the external IP of this service!
 
-## Locally
-Start a local web server with `make run`.
+### Application Settings
+The `app-top` app itself places most of its initial configuration information in `app/src/Configuration.js`.
 
-Once you start modifying `app/docs` files, keep your changes in sync by running `make template` in the background.
+These settings can all be overriden:
 
+```
+module.exports = {
+  baseColors: {
+    up: "red",
+    down: "green",
+    active: "#ffffff"
+  },
+  traversalDirection: 'both',
+  githubOrgName: 'msolters',
+  defaultKey: '👌',
+  graphRadius: 1,
+  detailView: {
+    open: true,
+    default: {
+      name: 'app-top',
+      doc: `
+# Welcome!
+\`app-top\` is a tool for creating relational documentation.  It allows you to write markdown documentation, which can then create dependency links to other pieces of documentation.
+
+\`app-top\` will then render graphical networks depicting the dependencies of your system.  These networks can be analyzed, rearranged, and filtered by depth or direction.
+
+It is intended to be used to document e.g. the relationships between core areas of a business product (such as what may appear on a status page), and myriad backend dependencies that such products entail: DNS records correctly configured, specific microservices running healthily, other network constructs such as endpoints and so on.
+`,
+      depends: {}
+    }
+  }
+}
+```
+
+Most of these settings should be self-explanatory after using the app once. 👀
