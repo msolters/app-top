@@ -103,25 +103,17 @@ sudo mv skaffold /usr/local/bin
 ```
 
 ### Configuring
-We need to tell Skaffold what Google Cloud Project we want to use Cloud Build in, so update `skaffold.yaml` to use your project ID:
-
-Example:
+We need to tell Skaffold what Google Cloud Project we want to use Cloud Build in:
 ```yaml
-# skaffold.yaml
-build:
-  googleCloudBuild:
-    projectId: my-project-492014
+export PROJECT_ID=<your project id here>
 ```
 
-Then, we need to tell Skaffold the specific Docker registry we intend to use to pull our images into k8s.  We can accomplish this be updating the registry definition in the `Makefile`:
-
-Example:
-```yaml
-# Makefile
-registry=gcr.io/my-project-492014
+Then, create the `skaffold.yaml` by running
+```bash
+./skaffold.sh
 ```
 
-That's all we need to perform a cloud build.
+With the `skaffold.yaml` we have everything we need to get started.
 
 ### Running
 To build everything and push it to your k8s cluster, run:
@@ -131,6 +123,13 @@ make skaffold-run
 ```
 
 This will cause the Dockerfile to be built in Google Cloud Build.  When it is done, the `k8s/*.yaml` files will be templated and deployed to the `current-context` of your `kubectl` env.
+
+### Running Containerized
+This project has a `cloudbuild.yaml` file and can be built in Google Cloud Builder.
+
+```
+google builds submit . --config=cloudbuild.yaml --substitutions _COMPUTE_ZONE=<your k8s zone>,_CONTAINER_CLUSTER=<k8s cluster name>,SHORT_SHA=<build commit or tag name>
+```
 
 # Customizing
 ### Your Own Documentation
