@@ -2,7 +2,11 @@
 name: app-top.marksolters.com
 doc: |-
   # About
-  This is an A record that points to the external load balancer for the `app-top` service.
+  This is an A record that points to the load balancer's external IP for the `app-top` service.
+  
+  The external load balancer in question is [this one](https://github.com/msolters/app-top/blob/master/k8s/svc.yaml).
+  
+  Once it is deployed and has been given an external IP, a DNS provider must be used to cause the host name to be an A record for that IP.
 
 depends:
   Service:
