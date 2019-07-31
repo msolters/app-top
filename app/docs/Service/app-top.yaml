@@ -8,6 +8,9 @@ doc: |-
   namespace | kind | name
   --- | --- | ---
   default | deployment | app-top
+  
+  ## Source
+  `app-top` is version controlled in the [`app-top` repo](https://github.com/msolters/app-top).
 
 depends:
   Service:
