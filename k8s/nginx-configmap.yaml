@@ -43,6 +43,7 @@ data:
         end)
 
         auto_ssl:set("storage_adapter", "resty.auto-ssl.storage_adapters.redis")
+        auto_ssl:set("renew_check_interval", 21600)
         auto_ssl:set("redis", {
           host = "redis-autossl.default.svc.cluster.local"
         })
