@@ -1,28 +1,88 @@
 # app-top
+
 Graphically browse arbitrarily defined and documented service dependencies.
 
-## Visualize
+`app-top` is an application topology visualizer. You curate a library of YAML
+files describing the pieces of your system and how they depend on one another;
+the app renders that library as a browsable, filterable dependency graph with
+full markdown documentation attached to every node and every edge.
 
-## Document
+Everything is driven by the YAML in [`app/docs/`](app/docs). There is no
+backend, no database, and no API: the docs are compiled into the bundle at
+build time and the whole app runs client-side.
+
+Live at **https://app-top.pages.dev** (and, once DNS is pointed, at
+`app-top.marksolters.com`).
+
+---
+
+## Quick start
+
+```bash
+nvm use          # Node 22, pinned in .nvmrc
+make install     # install app/ dependencies
+make dev         # http://localhost:3000, with hot reload
+```
+
+`make` with no target prints the full list:
+
+| Target | What it does |
+| --- | --- |
+| `make install` | Install `app/` dependencies (`npm ci`) |
+| `make dev` | Dev server with hot reload on `http://localhost:3000` |
+| `make watch` | Recompile `documentation.json` whenever `app/docs` changes |
+| `make build` | Production bundle into `app/build/` |
+| `make preview` | Serve the built bundle through the Cloudflare runtime on `:8788` |
+| `make deploy` | Build, then deploy to Cloudflare Pages by hand |
+| `make clean` | Remove `app/build/` and the generated `documentation.json` |
+| `make clean-all` | Also remove `app/node_modules` |
+
+Overridable: `make dev PORT=4000`, `make preview PREVIEW_PORT=8080`,
+`make deploy PAGES_PROJECT=app-top-staging`.
+
+### Prerequisites
+
+* **Node 22** — pinned in `.nvmrc`. With [nvm](https://github.com/nvm-sh/nvm),
+  `nvm use` in the repo root is enough. Node 18+ works; anything older is
+  rejected by `make` with a message telling you so.
+* **A Cloudflare login** — only for `make deploy`. Run `npx wrangler login`
+  once. CI deploys with its own credentials and needs nothing from you.
+
+Two build quirks are handled inside the Makefile so you never have to remember
+them:
+
+1. `app/src/templateDocs.js` compiles `app/docs/**/*.yaml` into
+   `app/src/documentation.json`. That file is generated and gitignored, and it
+   must exist before the bundler runs. Every relevant target regenerates it.
+2. This is `react-scripts` 3, which hashes assets with MD4 — an algorithm
+   modern OpenSSL refuses. Builds run with
+   `NODE_OPTIONS=--openssl-legacy-provider`.
+
+---
+
+## Writing documentation
+
 All `app-top` documents are stored in folders by type:
+
 ```
-~/github/app-top/app/docs$ ls -l
-total 12
-drwxr-xr-x 2 msolters msolters 4096 Jul 28 04:22 DNS Record
-drwxr-xr-x 2 msolters msolters 4096 Jul 28 04:20 Feature
-drwxr-xr-x 2 msolters msolters 4096 Jul 28 04:21 Service
+app/docs$ ls -l
+drwxr-xr-x  DNS Record
+drwxr-xr-x  Endpoint
+drwxr-xr-x  Feature
+drwxr-xr-x  Service
 ```
 
 ```
-~/github/app-top/app/docs$ ls -l Service/
-total 16
--rw-r--r-- 1 msolters msolters 344 Jul 28 04:03 app-top.yaml
--rw-r--r-- 1 msolters msolters  87 Jul 28 04:05 gcp.yaml
--rw-r--r-- 1 msolters msolters 234 Jul 28 04:05 gke.yaml
--rw-r--r-- 1 msolters msolters  99 Jul 28 04:21 moniker.yaml
+app/docs$ ls -l Service/
+-rw-r--r--  app-top.yaml
+-rw-r--r--  gcp.yaml
+-rw-r--r--  gke.yaml
+-rw-r--r--  moniker.yaml
 ```
 
-Each document shares the same, simply declarative structure.  For example, `docs/Feature/app-top.yaml` looks like:
+Each document shares the same, simply declarative structure. For example,
+`docs/Feature/app-top.yaml` looks like:
+
 ```yaml
 ---
 name: app-top
@@ -35,23 +95,27 @@ doc: |-
 depends:
   DNS Record:
     app-top.marksolters.com: |-
-      This hostname must be resolve for the app to be reachable.
+      This hostname must resolve for the app to be reachable.
   Service:
     app-top: |-
-      The `app-top` web app is served by the `app-top` `deployment`
-
+      The `app-top` web app is served by the `app-top` deployment
 ```
 
 So we're looking at the following properties to make a doc:
-*  `name`: The name of the thing
-*  `doc`: A multiline chunk of markdown describing the thing
-*  `depends`: A relational dictionary used to forge directional connections between documents
 
-The contents of `name` and `doc` are simple enough.  `depends` requires a bit of explanation.
+* `name`: The name of the thing
+* `doc`: A multiline chunk of markdown describing the thing
+* `depends`: A relational dictionary used to forge directional connections
+  between documents
 
-Every document has a `name` (clearly) and a `type`, which is given to it by the name of its parent folder.  So `docs/Feature/app-top.yaml` has `type: Feature`.
+The contents of `name` and `doc` are simple enough. `depends` requires a bit of
+explanation.
 
-Using these two variables is how the `depends` property works.  You can define structures of the form:
+Every document has a `name` (clearly) and a `type`, which is given to it by the
+name of its parent folder. So `docs/Feature/app-top.yaml` has `type: Feature`.
+
+Using these two variables is how the `depends` property works. You can define
+structures of the form:
 
 ```yaml
 depends:
@@ -62,99 +126,109 @@ depends:
     name3: "Description of relationship"
 ```
 
-This signifies that the document in question should have downstream dependencies on `type/name`, `type/name2`, `type2/name3`, et cetera.
+This signifies that the document in question should have downstream
+dependencies on `type/name`, `type/name2`, `type2/name3`, et cetera.
 
-It's optional to provide an actual description of the relationship.  Note that the descriptions can *also* be multiline and support full markdown!
+It's optional to provide an actual description of the relationship. Note that
+the descriptions can *also* be multiline and support full markdown!
 
-However, it's always recommended to fully document relationship descriptions as the context of these is often far more valuable than a description of the services individually.  Don't be afraid to put a lot of detail in these sections.
+However, it's always recommended to fully document relationship descriptions as
+the context of these is often far more valuable than a description of the
+services individually. Don't be afraid to put a lot of detail in these
+sections.
 
-### When Does Something Depend?
+### When does something depend?
+
 Whenever the hell you want.
 
-Recomended relationships are systems with a hard dependencies, such as Google Buckets depending on Google Cloud Platform.  However, these can be abused for any purpose whatsoever, such as making chronologically sequential yet not directly linked asynchronous workers "depend" on each other in order to cause the resulting network to represent the "flow" of data through the system.
+Recommended relationships are systems with hard dependencies, such as Google
+Buckets depending on Google Cloud Platform. However, these can be abused for
+any purpose whatsoever, such as making chronologically sequential yet not
+directly linked asynchronous workers "depend" on each other in order to cause
+the resulting network to represent the "flow" of data through the system.
 
-# Developing
-This project uses Skaffold and Google Cloud Build to CD to k8s, but can also be run locally without any of that stuff.
+### Editing the docs
 
-## Local Dev
-Start a local web server with `make run`.
+Run `make dev` and edit YAML — the dev server regenerates `documentation.json`
+on start, but not on every file change. To pick up doc edits live, run
+`make watch` in a second terminal alongside `make dev`.
 
-Once you start modifying `app/docs` files, keep your changes in sync by running `make template` in the background.
+---
 
-## Skaffold Dev
-### Prerequisites
-*  You will need `gcloud` authed on your host, and able to write to your private Docker registry.
-*  You will need `kubectl` installed, and have a `current-context` selected that you can push to.
-*  You will need `kustomize` binary installed ([kustomize docs](https://github.com/kubernetes-sigs/kustomize/blob/master/docs/INSTALL.md))
-*  You will need the `skaffold` binary installed ([skaffold docs](https://skaffold.dev/docs/getting-started/))
+## Deploying
 
-If you already have a working `kubectl` all you have to do is:
+The app is hosted on **Cloudflare Pages**, project `app-top`.
 
-```bash
-# Installing kustomize
-wget https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
-chmod +x kustomize_3.1.0_linux_amd64
-sudo mv kustomize_3.1.0_linux_amd64 /usr/local/bin/kustomize
+### Automatically, on push
 
-# Installing skaffold
-curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
-chmod +x skaffold
-sudo mv skaffold /usr/local/bin
-```
+`.github/workflows/deploy.yml` builds and deploys on every push to `master`
+(and on demand via *Actions → Deploy to Cloudflare Pages → Run workflow*). It
+runs the very same `make install` / `make build` a developer runs, so CI cannot
+drift from local.
 
-### Configuring
-We need to tell Skaffold what Google Cloud Project we want to use Cloud Build in:
-```yaml
-export PROJECT_ID=<your project id here>
-```
+It needs two repository secrets — *Settings → Secrets and variables → Actions*:
 
-Then, create the `skaffold.yaml` by running
-```bash
-./skaffold.sh
-```
-
-With the `skaffold.yaml` we have everything we need to get started.
-
-### Running
-To build everything and push it to your k8s cluster, run:
+| Secret | Value |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | An API token with the **Cloudflare Pages: Edit** permission |
+| `CLOUDFLARE_ACCOUNT_ID` | The Cloudflare account ID that owns the Pages project |
 
 ```bash
-make skaffold-run
+gh secret set CLOUDFLARE_API_TOKEN   # paste the token when prompted
+gh secret set CLOUDFLARE_ACCOUNT_ID  # paste the account ID when prompted
 ```
 
-This will cause the Dockerfile to be built in Google Cloud Build.  When it is done, the `k8s/*.yaml` files will be templated and deployed to the `current-context` of your `kubectl` env.
+Neither value belongs in the repo. Nothing in this tree contains a credential,
+and nothing should.
 
-### Running Containerized
-This project has a `cloudbuild.yaml` file and can be built in Google Cloud Builder.
+### By hand
 
-```
-google builds submit . --config=cloudbuild.yaml --substitutions _COMPUTE_ZONE=<your k8s zone>,_CONTAINER_CLUSTER=<k8s cluster name>,SHORT_SHA=<build commit or tag name>
-```
-
-# Customizing
-### Your Own Documentation
-All documentation is stored in `app/docs`.  The documentation provided here is meant only as an example.
-
-Simply overwrite the contents of `app/docs` with whatever you want!
-
-### Changing Hostname
-This repo expects to be hosted at `app-top.marksolters.com`.  To change this, simply update `k8s/nginx-configmap.yaml` to whitelist a different hostname:
-
-Example:
-```
-auto_ssl:set("allow_domain", function(domain, auto_ssl, ssl_options)
-    return ngx.re.match(domain, "^(hostname.resolving.toyourservice)$", "i")
-end)
+```bash
+npx wrangler login   # once
+make deploy
 ```
 
-When you deploy to k8s, you will create a `LoadBalancer` type `service` named `app-top`.  Make sure `hostname.resolving.toyourservice` has an A record pointing to the external IP of this service!
+This builds and pushes straight to production using your own Cloudflare
+credentials. Handy for a hotfix; CI is the normal path.
 
-### Application Settings
-The `app-top` app itself places most of its initial configuration information in `app/src/Configuration.js`.
+### Configuration
 
-These settings can all be overriden:
+[`wrangler.toml`](wrangler.toml) is the whole Pages configuration: the project
+name and `pages_build_output_dir = "app/build"`. There are no Pages Functions,
+no bindings, and no environment variables.
 
-```
+The app uses `HashRouter`, so every route lives behind `#/...` on `index.html`
+and **no SPA fallback or `_redirects` rule is needed**.
+
+---
+
+## Custom domain
+
+`marksolters.com` is a Cloudflare zone, so attaching the hostname is a single
+step and involves the registrar not at all:
+
+**Workers & Pages → app-top → Custom domains → Set up a custom domain**, enter
+`app-top.marksolters.com`.
+
+Cloudflare creates the DNS record in the zone and issues the TLS certificate
+itself. Nothing to add by hand, nothing to wait on at Moniker.
+
+---
+
+## Customizing
+
+### Your own documentation
+
+All documentation is stored in `app/docs`. The documentation provided here is
+meant only as an example. Simply overwrite the contents of `app/docs` with
+whatever you want.
+
+### Application settings
+
+`app-top` places most of its initial configuration in
+[`app/src/Configuration.js`](app/src/Configuration.js):
+
+```js
 module.exports = {
   baseColors: {
     up: "red",
@@ -169,14 +243,7 @@ module.exports = {
     open: true,
     default: {
       name: 'app-top',
-      doc: `
-# Welcome!
-\`app-top\` is a tool for creating relational documentation.  It allows you to write markdown documentation, which can then create dependency links to other pieces of documentation.
-
-\`app-top\` will then render graphical networks depicting the dependencies of your system.  These networks can be analyzed, rearranged, and filtered by depth or direction.
-
-It is intended to be used to document e.g. the relationships between core areas of a business product (such as what may appear on a status page), and myriad backend dependencies that such products entail: DNS records correctly configured, specific microservices running healthily, other network constructs such as endpoints and so on.
-`,
+      doc: `...markdown shown when nothing is selected...`,
       depends: {}
     }
   }
@@ -184,3 +251,27 @@ It is intended to be used to document e.g. the relationships between core areas 
 ```
 
 Most of these settings should be self-explanatory after using the app once. 👀
+
+---
+
+## Repository layout
+
+```
+.nvmrc                       Node version (22)
+Makefile                     every command you need — `make` for the list
+wrangler.toml                Cloudflare Pages project config
+.github/workflows/deploy.yml build + deploy on push to master
+app/docs/                    the documentation library — the actual content
+app/src/                     the React app
+app/src/templateDocs.js      docs/*.yaml -> src/documentation.json (prebuild)
+```
+
+The project previously deployed to GKE via Docker, Skaffold, Kustomize and
+Google Cloud Build. That scaffolding has been removed in favour of Cloudflare
+Pages; it remains in git history if you ever want it back.
+
+---
+
+## License
+
+See [`license`](license).
