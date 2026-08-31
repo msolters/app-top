@@ -4,6 +4,7 @@ import md5 from 'md5';
 export class Canvas extends Component {
   constructor(props) {
     super(props);
+    this.svgRef = React.createRef();
   }
 
   generateLine(startRect, destRect)
@@ -83,19 +84,42 @@ export class Canvas extends Component {
   }
 
 
-  applyScrollTransform(line) {
-    return line
-      .map(
-        (p) => p.map(
-          (n)=>Math.round(n)
-        )
-      )
-      .map(
-        (p) => [
-          p[0]+document.getElementById("root").scrollLeft,
-          p[1]+document.getElementById("root").scrollTop
-        ]
-      );
+  // Convert a list of [x, y] points from client coordinates — the space
+  // getBoundingClientRect() measures every node in — into the <svg> element's
+  // own user space, which is the space a path's `d` attribute is drawn in.
+  //
+  // Those are not the same space. index.css sets `html { zoom: 80% }`, and a
+  // CSS zoom scales the visual coordinate system: a rect comes back in zoomed
+  // (client) pixels, while one SVG user unit inside that same zoomed subtree is
+  // still an unzoomed pixel. Writing measured client pixels straight into `d`
+  // therefore drew every edge at 80% of its intended position — the further
+  // right a node sat, the wider the gap between it and the arrow that was
+  // supposed to touch it.
+  //
+  // The <svg>'s own screen CTM *is* the user -> client mapping, so its inverse
+  // converts a measurement back into the space the path is drawn in. It also
+  // folds in the scroll offset of #root, which is why this replaces the manual
+  // scrollLeft/scrollTop correction that used to live here: that correction
+  // added an unzoomed scroll distance to a zoomed measurement, which was wrong
+  // in the same way and for the same reason.
+  clientToSvg(line) {
+    const round = (l) => l.map((p) => p.map((n) => Math.round(n)));
+    const svg = this.svgRef.current;
+    const ctm = svg && svg.getScreenCTM && svg.getScreenCTM();
+    if (!ctm) return round(line);
+    const { a, b, c, d, e, f } = ctm;
+    const det = (a * d) - (b * c);
+    if (!det) return round(line);
+    return round(
+      line.map(([x, y]) => {
+        const dx = x - e;
+        const dy = y - f;
+        return [
+          ((dx * d) - (dy * c)) / det,
+          ((dy * a) - (dx * b)) / det
+        ];
+      })
+    );
   }
 
   render() {
@@ -132,7 +156,7 @@ export class Canvas extends Component {
             [startRect.x + startRect.width + (startRect.width * 0.2), (startRect.y + (startRect.height*0.5))]
           ];
         }
-        const [s, e] = this.applyScrollTransform(line);
+        const [s, e] = this.clientToSvg(line);
         paths.push(
           <path
             key={edgeKey}
@@ -157,7 +181,7 @@ export class Canvas extends Component {
         if (destRef === null) continue;
         const destRect = destRef.getBoundingClientRect();
         const line = this.generateLine(startRect, destRect);
-        const [s, cA, cB, e] = this.applyScrollTransform(line)
+        const [s, cA, cB, e] = this.clientToSvg(line)
 
         // const edgeKey = md5(startKey+destKey+edge.startColor+edge.endColor);
         defs.push(
@@ -202,6 +226,7 @@ export class Canvas extends Component {
 
     return(
       <svg
+        ref={this.svgRef}
         className="curveLayer"
         width="4000px"
         height="4000px"

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 import md5 from 'md5';
+import pageZoom from './pageZoom.js';
 
 class Doc extends Component {
   constructor(props) {
@@ -77,6 +78,7 @@ export class DocList extends Component {
       <Draggable
         position={this.props.offsets[type]}
         handle=".title"
+        scale={pageZoom()}
         onStop={this.onDocTypeMoved}
       >
       <div className="verticalGutter">

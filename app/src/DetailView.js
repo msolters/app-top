@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Draggable from 'react-draggable';
 import ReactMarkdown from "react-markdown";
 import CodeBlock from "./CodeBlock";
+import pageZoom from './pageZoom.js';
 
 class Dep extends Component {
   constructor(props) {
@@ -112,7 +113,7 @@ export class DetailView extends Component {
     }
 
     return(
-      <Draggable>
+      <Draggable scale={pageZoom()}>
         <div className=" leftAlign detailView" style={initStyle}>
           <div className="detailTitle">{doc.name}</div>
           <div className="detailType">{doc.type}</div>
