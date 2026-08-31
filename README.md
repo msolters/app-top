@@ -42,21 +42,21 @@ Overridable: `make dev PORT=4000`, `make preview PREVIEW_PORT=8080`,
 
 ### Prerequisites
 
-* **Node 22** — pinned in `.nvmrc`. With [nvm](https://github.com/nvm-sh/nvm),
-  `nvm use` in the repo root is enough. Node 18+ works; anything older is
-  rejected by `make` with a message telling you so.
+* **Node 22** — pinned in `.nvmrc`, and the single version used for the build,
+  the dev server and wrangler alike. With [nvm](https://github.com/nvm-sh/nvm),
+  `nvm use` in the repo root is enough. Anything older is rejected by `make`
+  with a message telling you so.
 * **A Cloudflare login** — only for `make deploy`. Run `npx wrangler login`
   once. CI deploys with its own credentials and needs nothing from you.
 
-Two build quirks are handled inside the Makefile so you never have to remember
-them:
+One build quirk is handled inside the Makefile so you never have to remember it:
+`app/src/templateDocs.js` compiles `app/docs/**/*.yaml` into
+`app/src/documentation.json`. That file is generated and gitignored, and it must
+exist before the bundler runs. Every relevant target regenerates it.
 
-1. `app/src/templateDocs.js` compiles `app/docs/**/*.yaml` into
-   `app/src/documentation.json`. That file is generated and gitignored, and it
-   must exist before the bundler runs. Every relevant target regenerates it.
-2. This is `react-scripts` 3, which hashes assets with MD4 — an algorithm
-   modern OpenSSL refuses. Builds run with
-   `NODE_OPTIONS=--openssl-legacy-provider`.
+The app is bundled by [Vite](https://vite.dev). There is no `NODE_OPTIONS` flag
+and no `CI=false` override anywhere in the build; `make build` does the same
+thing on a laptop and in GitHub Actions.
 
 ---
 
@@ -229,7 +229,7 @@ whatever you want.
 [`app/src/Configuration.js`](app/src/Configuration.js):
 
 ```js
-module.exports = {
+export default {
   baseColors: {
     up: "red",
     down: "green",
@@ -261,6 +261,8 @@ Most of these settings should be self-explanatory after using the app once. 👀
 Makefile                     every command you need — `make` for the list
 wrangler.toml                Cloudflare Pages project config
 .github/workflows/deploy.yml build + deploy on push to master
+app/index.html               the Vite entry point
+app/vite.config.mjs          bundler configuration
 app/docs/                    the documentation library — the actual content
 app/src/                     the React app
 app/src/templateDocs.js      docs/*.yaml -> src/documentation.json (prebuild)

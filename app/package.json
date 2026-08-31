@@ -6,33 +6,29 @@
     "color-interpolate": "^1.0.4",
     "color-scheme": "^1.0.1",
     "hex-to-rgba": "^2.0.0",
+    "history": "^4.10.1",
     "immutability-helper": "^3.0.1",
     "md5": "^2.2.1",
+    "path-browserify": "^1.0.1",
+    "prop-types": "^15.8.1",
     "react": "^16.8.2",
     "react-dom": "^16.8.2",
     "react-draggable": "^3.3.0",
     "react-markdown": "^4.1.0",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.0.1",
-    "react-syntax-highlighter": "^11.0.1",
+    "react-syntax-highlighter": "^11.0.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.2.0",
+    "vite": "^7.3.6",
     "watch": "^1.0.2",
-    "yaml": "^1.6.0"
+    "yaml": "^2.9.0"
   },
   "scripts": {
-    "start": "node src/templateDocs.js && react-scripts start",
     "template": "node src/templateDocs.js",
-    "watch": "watch 'npm run template' docs/ -d",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+    "start": "npm run template && vite",
+    "build": "npm run template && vite build",
+    "preview": "vite preview",
+    "watch": "watch 'npm run template' docs/ -d"
+  }
 }

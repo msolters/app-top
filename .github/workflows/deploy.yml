@@ -39,8 +39,9 @@ jobs:
 
       # `make install` and `make build` are the same commands a developer runs
       # locally, so CI cannot silently drift from the local build. The Makefile
-      # owns the templateDocs prebuild and the --openssl-legacy-provider flag
-      # react-scripts 3 needs.
+      # owns the templateDocs prebuild. Nothing here needs a NODE_OPTIONS flag or
+      # a CI= override: Vite builds identically whether or not CI is set, and the
+      # single Node version above (from .nvmrc) serves the build and wrangler alike.
       - name: Install dependencies
         run: make install
 

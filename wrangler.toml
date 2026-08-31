@@ -6,9 +6,9 @@
 # Because `pages_build_output_dir` is set here, `wrangler pages deploy` needs
 # no directory argument — see the `deploy` target in the Makefile.
 #
-# The app is a purely client-side create-react-app bundle using HashRouter,
-# so every route lives behind `#/...` on `index.html`. No Pages Functions, no
-# `_redirects` SPA fallback, no bindings are required.
+# The app is a purely client-side Vite bundle using HashRouter, so every route
+# lives behind `#/...` on `index.html`. No Pages Functions, no `_redirects` SPA
+# fallback, no bindings are required.
 
 name = "app-top"
 pages_build_output_dir = "app/build"

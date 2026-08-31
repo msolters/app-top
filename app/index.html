@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#000000" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="/manifest.json" />
+    <!--
+      Anything in public/ is copied verbatim to the root of the bundle, so it is
+      addressable as an absolute path from here. This app is served from the
+      root of its own origin and routes with HashRouter, so absolute paths are
+      always correct.
+    -->
+    <title>app-top</title>
+    <script>
+      // webpack 4 — which create-react-app 3 used — automatically bundled a
+      // browser shim for Node's `process` global. react-markdown 4 depends on it:
+      // vfile does `this.cwd = process.cwd()` every time a document is parsed, so
+      // without a shim the very first <ReactMarkdown> render throws
+      // "process is not defined". Vite does not polyfill Node globals, so supply
+      // the same minimal shim here, with the same values webpack's did.
+      //
+      // This does not affect `process.env.NODE_ENV`: React 16's CommonJS entry
+      // point switches on it, and the bundler replaces that expression statically
+      // at build time, so it is never read off this object.
+      window.process = window.process || {
+        env: {},
+        cwd: function () { return '/'; },
+        browser: true,
+        platform: 'browser',
+        version: '',
+        argv: [],
+      };
+    </script>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
+      Vite treats this file as the entry point: it resolves the module script
+      below, bundles it, and rewrites this tag to point at the built asset.
+    -->
+    <script type="module" src="/src/index.js"></script>
+  </body>
+</html>
